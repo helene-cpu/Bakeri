@@ -1,7 +1,28 @@
+/* Body */
+.body{
+    font-family: sans-serif;
+}
+
+.background{
+    background-image: 
+    linear-gradient(rgba(255,255,255,0.7),
+        rgba(255,255,255,0.5)),
+    url(/static/img/background.jpg);
+    background-size: cover;
+    min-height: 800px;
+    padding: 70px;
+}
+
+.container{
+    background-color: #d2ddee;
+    padding: 10px;
+}
+
+/* Navbar */
 .topnav{
     display: flex;
     align-items: center;
-    background-color: rgb(72, 163, 163);
+    background-color: #d8e6dd;
     padding: 0.5rem 1rem;
 }
 
