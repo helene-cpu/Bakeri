@@ -1,6 +1,18 @@
-from flask import Flask, render_template_string, render_template
+from flask import Flask, render_template, redirect, session, request
+import mysql.connector
+from forms import LoginForm, RegisterForm
+from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
+app.config["SECRET_KEY"] = "superduperekstrahemmelig123"
+
+def get_conn():
+    return mysql.connector.connect(
+        host = "localhost",
+        user = "baker",
+        password = DB_Password,
+        database = "Bakeri"
+)
 
 @app.route('/')
 def index():
@@ -16,11 +28,63 @@ def admin():
 
 @app.route('/login', methods=["POST", "GET"])
 def login():
-    return render_template('login.html', methods=["POST", "GET"])
+    form = LoginForm()
+    if form.validate_on_submit():
+        brukernavn = form.brukernavn.data
+        passord = form.passord.data
 
-@app.route('/register')
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT Navn, Passord FROM brukere WHERE Brukernavn= %s",
+            (brukernavn,)
+        )
+        user = cur.fetchone()
+        cur.close()
+        conn.close()
+
+        if user:
+            navn_db = user[0]
+            passord_db = user[1]
+
+            if check_password_hash(passord_db, passord):
+                session['navn'] = navn_db
+                return redirect("/admin")
+    
+            else:
+                form.brukernavn.errors.append("Feil brukernavn eller passord")
+
+        else:
+            form.brukernavn.errors.append("Feil brukernavn eller passord")
+
+    return render_template('login.html', form = form)
+
+@app.route('/register', methods=["GET", "POST"])
 def register():
-    return render_template('register.html', methods=["POST", "GET"])
+    form = RegisterForm()
+
+    if form.validate_on_submit():
+        navn = form.navn.data
+        brukernavn = form.brukernavn.data
+        passord = form.passord.data
+
+        passord_hash = generate_password_hash(passord)
+
+        conn = get_conn()
+        cur = conn.cursor()
+
+        cur.execute(
+            "INSERT INTO brukere (Navn, Brukernavn, Passord) VALUES (%s, %s, %s)",
+            (navn, brukernavn, passord_hash)
+        )
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        return redirect('/login')
+
+    return render_template('register.html', form=form)
 
 if __name__ == "__main__":
     app.run()

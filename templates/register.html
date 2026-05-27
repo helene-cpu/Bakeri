@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Registrer ny bruker</h1>
+<form method="post">
+    {{ form.hidden_tag() }}
+    {{ form.navn.label }}{{ form.navn }}<br>
+    {{ form.brukernavn.label }}{{ form.brukernavn }}<br>
+    {{ form.passord.label }}{{ form.passord }}<br>
+    {{ form.submit }}
+</form>
+{% endblock %}
