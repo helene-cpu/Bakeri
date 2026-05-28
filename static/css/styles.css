@@ -19,14 +19,14 @@
 }
 
 /* Navbar */
-.topnav{
+.topnav, .admin_navbar{
     display: flex;
     align-items: center;
     background-color: #d8e6dd;
     padding: 0.5rem 1rem;
 }
 
-.topnav a {
+.topnav a, .admin_navbar a{
     text-decoration: none;
     color: black;
     font-size: 1.5rem;
@@ -45,7 +45,7 @@
     font-family: sans-serif;
 }
 
-.topnav img {
+.topnav img, .admin_navbar img {
     height: 40px;
     max-height: 50px;
     width: auto;

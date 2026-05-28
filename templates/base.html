@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
+    {% block topnav %}
     <div class="topnav">
         <img src="/static/img/placeholder.png" alt="placeholder" href="/">
         <a class="hjem" href="/">Hjem</a>
@@ -14,7 +15,11 @@
         <a class="faq" href="/faq">FAQ</a>
         <a class="admin_navbar" href="/login">Admin</a>
     </div>
+    {% endblock %}
     
+    {% block navbar %}
+    {% endblock %}
+
     {% block content %}{% endblock %}
 </body>
 </html>
