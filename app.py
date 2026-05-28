@@ -61,7 +61,7 @@ def bestill():
         cur.close()
         conn.close()
 
-        return redirect("/")
+        return redirect("/bestilt")
 
     return render_template('bestill.html', form=form)
 
@@ -92,7 +92,7 @@ def admin():
         cur.close()
         conn.close()
 
-        if svar == "Godkjenn":
+        if svar == "Godkjent":
             send_email(ordre[0], ordre[1], ordre[2], ordre[3], ordre[4])
 
         return redirect("/admin")
@@ -172,6 +172,10 @@ def register():
 @app.route('/faq')
 def faq():
     return render_template("faq.html")
+
+@app.route('/manual')
+def manual():
+    return render_template("manual.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
