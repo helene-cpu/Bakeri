@@ -1,7 +1,11 @@
 from flask import Flask, render_template, redirect, session, request
 import mysql.connector
-from forms import LoginForm, RegisterForm
+import sendgrid
+from forms import LoginForm, RegisterForm, BestilleForm
 from werkzeug.security import check_password_hash, generate_password_hash
+from config import DB_Password
+from sendgrid.helpers.mail import Mail
+
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "superduperekstrahemmelig123"
@@ -20,7 +24,24 @@ def index():
 
 @app.route('/bestill', methods=["POST", "GET"])
 def bestill():
-    return render_template('bestill.html')
+    form = BestilleForm()
+    epost = form.epost.data
+    antall = form.antall.data
+    smak = form.smak.data
+    topping = form.topping.data
+    levering = form.levering.data
+
+    conn = get_conn()
+    cur = conn.cursor()
+    cur.execute(
+        "INSERT INTO bestilling (Epost, Antall, Smak, Topping, Levering) values (%s, %s, %s, %s, %s)",
+        (epost, antall, smak, topping, levering)
+    )
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return render_template('bestill.html', form=form)
 
 @app.route('/admin', methods=["POST", "GET"])
 def admin():
@@ -31,7 +52,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         brukernavn = form.brukernavn.data
-        passord = form.passord.data
+        passord = form.passord.data 
 
         conn = get_conn()
         cur = conn.cursor()

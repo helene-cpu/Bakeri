@@ -1,4 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="bestilling">
+    <h1>Cupcakes slik du ønsker!</h1>
+   <form method="POST">
+    {{ form.hidden_tag() }}
+    {{ form.epost.label }}{{ form.epost }}<br>
+    {{ form.antall.label }}{{ form.antall }}<br>
+    {{ form.smak.label }}{{ form.smak }}<br>
+    {{ form.topping.label }}{{ form.topping }}<br>
+    {{ form.levering.label }}{{ form.levering }}<br>
+    {{ form.submit }}
+   </form>
+</div>
 {% endblock %}
