@@ -5,6 +5,7 @@ from forms import LoginForm, RegisterForm, BestilleForm, AcceptForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from config import DB_Password
 from sendgrid.helpers.mail import Mail
+from config import SENDGRID_API_KEY, SENDGRID_FROM_EMAIL
 
 
 app = Flask(__name__)
@@ -17,6 +18,24 @@ def get_conn():
         password = DB_Password,
         database = "Bakeri"
 )
+
+def send_email(til_epost, antall, smak, topping, levering):
+    sg = sendgrid.SendGridAPIClient(api_key=SENDGRID_API_KEY)
+    message = Mail(
+        from_email=SENDGRID_FROM_EMAIL, 
+        to_emails=til_epost,
+        subject="Bestillingen din er bekreftet!"
+    )
+
+    message.template_id = "d-1e763544b9d94926a8fdf01e92699066"
+
+    message.dynamic_template_data = {
+        "Antall": antall,
+        "Smak": smak,
+        "Topping": topping,
+        "Levering": levering
+    }
+    sg.send(message)
 
 @app.route('/')
 def index():
@@ -42,7 +61,7 @@ def bestill():
         cur.close()
         conn.close()
 
-        return render_template('bestilt.html', form=form)
+        return redirect("/")
 
     return render_template('bestill.html', form=form)
 
@@ -53,10 +72,42 @@ def bestilt():
 @app.route('/admin', methods=["POST", "GET"])
 def admin():
     form = AcceptForm()
-    svar = form.svar.data
+    if form.validate_on_submit():
+        svar = form.svar.data
+        bestilling_id = request.form.get('bestilling_id')
 
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute(
+           "UPDATE bestilling SET Svar = %s WHERE Bestilling_ID = %s",
+           (svar, bestilling_id)
+        )
 
-    return render_template("admin.html")
+        conn.commit()
+        cur.execute(
+            "SELECT epost, Antall, Smak, Topping, Levering FROM bestilling WHERE Bestilling_ID = %s",
+            (bestilling_id,)
+        )
+        ordre = cur.fetchone()
+        cur.close()
+        conn.close()
+
+        if svar == "Godkjenn":
+            send_email(ordre[0], ordre[1], ordre[2], ordre[3], ordre[4])
+
+        return redirect("/admin")
+
+    conn = get_conn()
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT epost, Antall, Smak, Topping, Levering, Bestilling_ID FROM bestilling WHERE Svar IS NULL"
+    )
+
+    ordre = cur.fetchall()
+    cur.close()
+    conn.close()
+    
+    return render_template("admin.html", ordre=ordre, form=form)
 
 @app.route('/login', methods=["POST", "GET"])
 def login():
@@ -119,4 +170,4 @@ def register():
     return render_template('register.html', form=form)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

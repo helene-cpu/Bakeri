@@ -1,5 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Hello, world!</h1>
+<div class="admin">
+   {% for o in ordre %}
+<p><strong>Epost: </strong>{{ o[0] }}</p> 
+    <p><strong>Antall: </strong>{{ o[1] }}</p>
+    <p><strong>Smak: </strong>{{ o[2] }}</p>
+    <p><strong>Topping: </strong>{{ o[3] }}</p> 
+    <p><strong>Levering: </strong>{{ o[4] }}</p>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+<input type="hidden" name="bestilling_id" value="{{ o[5] }}">
+{{ form.svar.label }}{{ form.svar }}
+    {{ form.submit() }}
+</form>
+
+{% endfor %}
+</div>
 {% endblock %}
