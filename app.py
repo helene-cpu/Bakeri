@@ -31,20 +31,31 @@ def bestill():
     topping = form.topping.data
     levering = form.levering.data
 
-    conn = get_conn()
-    cur = conn.cursor()
-    cur.execute(
-        "INSERT INTO bestilling (Epost, Antall, Smak, Topping, Levering) values (%s, %s, %s, %s, %s)",
-        (epost, antall, smak, topping, levering)
-    )
-    conn.commit()
-    cur.close()
-    conn.close()
+    if form.validate_on_submit():
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute(
+            "INSERT INTO bestilling (Epost, Antall, Smak, Topping, Levering) values (%s, %s, %s, %s, %s)",
+            (epost, antall, smak, topping, levering)
+        )
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        return render_template('bestilt.html', form=form)
 
     return render_template('bestill.html', form=form)
 
+@app.route('/bestilt', methods=["POST", "GET"])
+def bestilt():
+    return render_template("bestilt.html")
+
 @app.route('/admin', methods=["POST", "GET"])
 def admin():
+    form = AcceptForm()
+    svar = form.svar.data
+
+
     return render_template("admin.html")
 
 @app.route('/login', methods=["POST", "GET"])
