@@ -12,3 +12,24 @@ class LoginForm(FlaskForm):
     brukernavn = StringField("Brukernavn", validators=[InputRequired()])
     passord = PasswordField("Passord", validators=[InputRequired()])
     submit = SubmitField("Logg inn")
+
+class BestilleForm(FlaskForm):
+    epost = StringField("E-post", validators=[InputRequired()])
+    antall = StringField("Antall Cupcakes", validators=[InputRequired()])
+    smak = SelectField("Hvilken smak ønsker du?", choices=[
+        ("---",""),
+        ("Sjokolade", "Sjokolade"),
+        ("Jordbær", "Jordbær"),
+        ("Vanilje", "Vanilje"),
+        ("Karamell", "Karamell"),
+        ("Tutti Frutti", "Tutti Frutti")
+    ], validators=[InputRequired()])
+    topping = SelectField("Hva slags topping ønsker du?", choices=[
+        ("---",""),
+        ("Strøssel","Strøssel"),
+        ("Oreo", "Oreo"),
+        ("Godteri", "Godteri"),
+        ("Ingenting", "Ingenting")
+    ], validators=[InputRequired()])
+    levering = StringField("Hvor ønsker du dette levert?", validators=[InputRequired()])
+    submit = SubmitField("Send bestilling")
