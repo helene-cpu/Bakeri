@@ -33,3 +33,11 @@ class BestilleForm(FlaskForm):
     ], validators=[InputRequired()])
     levering = StringField("Hvor ønsker du dette levert?", validators=[InputRequired()])
     submit = SubmitField("Send bestilling")
+
+class AcceptForm(FlaskForm):
+    svar = SelectField("Godkjenn eller bekreft ordre", choices=[
+        ("---",""),
+        ("Godkjent", "Godkjenn"),
+        ("Ikke godkjent", "Avslå")
+    ], validators=[InputRequired()])
+    submit = SubmitField("Bekreft")

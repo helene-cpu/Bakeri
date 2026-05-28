@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, session, request
 import mysql.connector
 import sendgrid
-from forms import LoginForm, RegisterForm, BestilleForm
+from forms import LoginForm, RegisterForm, BestilleForm, AcceptForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from config import DB_Password
 from sendgrid.helpers.mail import Mail
